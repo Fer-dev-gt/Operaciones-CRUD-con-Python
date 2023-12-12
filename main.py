@@ -24,7 +24,7 @@ def create_client(client):
 		print('Client already is in the client\'s list')
 
 
-def list_clients():
+def list_clients(): 
 	for idx, client in enumerate(clients):
 		print('{uid} | {name} | {company} | {email} | {position}'.format(
             		uid=idx, 
