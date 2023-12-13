@@ -47,7 +47,7 @@ def update_client(client_index, updated_client):
 
 
 def delete_client(client_index):
-	global clients
+	global clients 
 	client_index = int(client_index)
 	
 	if len(clients) - 1 >= client_index:
