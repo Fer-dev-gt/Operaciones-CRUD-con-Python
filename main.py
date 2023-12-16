@@ -1,20 +1,29 @@
 import sys
+import csv
+import os
 
-clients = [
-	{
-		'name': 'Pablo',
-		'company': 'Google',
-		'email': 'pablo@google.com',
-		'position': 'Software Engineer' 
-	},
-	{
-		'name': 'Ricardo',
-                'company': 'Facebook',
-                'email': 'ricardo@fabebook.com',
-                'position': 'Data Engineer'
-	},
-]
+CLIENT_TABLE = '.clients.csv'
+CLIENT_SCHEMA = ['name', 'company', 'email', 'position']
+clients = []
 
+
+def _initialize_clients_from_storage():
+	with open(CLIENT_TABLE, mode ='r') as f:
+		reader = csv.DictReader(f, fieldnames=CLIENT_SCHEMA)
+		
+		for row in reader:
+			clients.append(row)	
+
+
+def _save_clients_to_storage():
+	temporal_table_name = '{}.tmp'.format(CLIENT_TABLE)
+	with open(temporal_table_name, mode='w') as f:
+		writer = csv.DictWriter(f, fieldnames=CLIENT_SCHEMA)
+		writer.writerows(clients)
+		os.remove(CLIENT_TABLE)
+		os.rename(temporal_table_name, CLIENT_TABLE)
+		
+	
 
 def create_client(client):
 	global clients
@@ -94,6 +103,7 @@ def _get_client_field(field_name):
 
 
 if __name__ == '__main__':
+	_initialize_clients_from_storage()
 	_print_welcome()
 	
 	command = input()
@@ -102,11 +112,9 @@ if __name__ == '__main__':
 	if command == 'C':
 		client = _ask_for_client_data()
 		create_client(client)
-		list_clients()
 	elif command == 'D':
 		client_index = _get_client_field('index')
 		delete_client(client_index)
-		list_clients()
 	elif command == 'L':
 		list_clients()
 	elif command == 'U':
@@ -123,3 +131,5 @@ if __name__ == '__main__':
 			print(f'The client \'{client_name}\' DOES NOT EXIST in the client\'s list')
 	else:
 		print('INVALID COMMAND')
+
+	_save_clients_to_storage()
